@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Frontend - React/Next.js application
+  frontend:
+    build:
+      context: apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    networks:
+      - report-insights
+
+  # Backend - FastAPI application
+  backend:
+    build:
+      context: apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - FASTAPI_ENV=development
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - CORS_ORIGINS=http://localhost:3000
+    networks:
+      - report-insights
+
+networks:
+  report-insights:
+    driver: bridge
